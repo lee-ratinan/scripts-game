@@ -22,21 +22,23 @@ $modes = [
         <div class="col">
             <h2><?= $name ?></h2>
             <div class="row">
-                <div class="col">
+                <div class="col-4">
                     <a class="btn btn-outline-danger w-100" href="<?= base_url('japanese/entry/' . $slug . '/hiragana') ?>">
                         <h3>ひらがな</h3>
                     </a>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <a class="btn btn-outline-danger w-100" href="<?= base_url('japanese/entry/' . $slug . '/katakana') ?>">
                         <h3>カタカナ</h3>
                     </a>
                 </div>
-                <div class="col">
+                <?php if (in_array($slug, ['kana-pick-romaji', 'kana-type-romaji'])) : ?>
+                <div class="col-4">
                     <a class="btn btn-outline-danger w-100" href="<?= base_url('japanese/entry/' . $slug . '/all') ?>">
                         <h3>ひ・カ</h3>
                     </a>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
