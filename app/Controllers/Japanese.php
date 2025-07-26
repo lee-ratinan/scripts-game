@@ -5,6 +5,10 @@ namespace App\Controllers;
 class Japanese extends BaseController
 {
 
+    /**
+     * @param array $types
+     * @return array
+     */
     private function retrieveCharacters(array $types): array
     {
         $characters = [
@@ -104,10 +108,135 @@ class Japanese extends BaseController
     public function entry(string $game, string $kana_set): string
     {
         $data = [
-            'game' => $game,
+            'game'     => $game,
             'kana_set' => $kana_set,
         ];
         return view('japanese_entry', $data);
+    }
+
+    private function flattenSet(array $character_sets): array
+    {
+        $final_set = [];
+        foreach ($character_sets as $letters) {
+            foreach ($letters as $romaji => $kana) {
+                $final_set[] = [$romaji, $kana];
+            }
+        }
+        return $final_set;
+    }
+
+    private function romajiPickKana(array $character_sets, string $kana_type): array
+    {
+        $kana_set = $this->flattenSet($character_sets[$kana_type]);
+        $init_set = [];
+        while (count($init_set) < 15) {
+            $index = rand(0, 103);
+            if (!in_array($index, $init_set)) {
+                $init_set[] = $index;
+            }
+        }
+        $question_set = [];
+        foreach ($init_set as $index) {
+            $answer_choices = [];
+            $answer_choices[] = $kana_set[$index][1];
+            while (count($answer_choices) < 5) {
+                $x = rand(0, 103);
+                if (!in_array($kana_set[$x][1], $answer_choices)) {
+                    $answer_choices[] = $kana_set[$x][1];
+                }
+            }
+            shuffle($answer_choices);
+            $question_set[] = [
+                'question' => $kana_set[$index][0],
+                'answer'   => $kana_set[$index][1],
+                'choices'  => $answer_choices
+            ];
+        }
+        return $question_set;
+    }
+
+    private function romajiTypeKana(array $character_sets, string $kana_type): array
+    {
+        $kana_set = $this->flattenSet($character_sets[$kana_type]);
+        $init_set = [];
+        while (count($init_set) < 15) {
+            $index = rand(0, 103);
+            if (!in_array($index, $init_set)) {
+                $init_set[] = $index;
+            }
+        }
+        $question_set = [];
+        foreach ($init_set as $index) {
+            $question_set[] = [
+                'question' => $kana_set[$index][0],
+                'answer'   => $kana_set[$index][1],
+            ];
+        }
+        return $question_set;
+    }
+
+    private function kanaPickRomaji(array $character_sets, string $kana_type): array
+    {
+        if ('all' == $kana_type) {
+            $set1 = $this->flattenSet($character_sets['hiragana']);
+            $set2 = $this->flattenSet($character_sets['katakana']);
+            $kana_set = array_merge($set1, $set2);
+        } else {
+            $kana_set = $this->flattenSet($character_sets[$kana_type]);
+        }
+        $kana_count = count($kana_set)-1;
+        $init_set = [];
+        while (count($init_set) < 15) {
+            $index = rand(0, $kana_count);
+            if (!in_array($index, $init_set)) {
+                $init_set[] = $index;
+            }
+        }
+        $question_set = [];
+        foreach ($init_set as $index) {
+            $answer_choices = [];
+            $answer_choices[] = $kana_set[$index][0];
+            while (count($answer_choices) < 5) {
+                $x = rand(0, $kana_count);
+                if (!in_array($kana_set[$x][0], $answer_choices)) {
+                    $answer_choices[] = $kana_set[$x][0];
+                }
+            }
+            shuffle($answer_choices);
+            $question_set[] = [
+                'question' => $kana_set[$index][1],
+                'answer'   => $kana_set[$index][0],
+                'choices'  => $answer_choices
+            ];
+        }
+        return $question_set;
+    }
+
+    private function kanaTypeRomaji(array $character_sets, string $kana_type): array
+    {
+        if ('all' == $kana_type) {
+            $set1 = $this->flattenSet($character_sets['hiragana']);
+            $set2 = $this->flattenSet($character_sets['katakana']);
+            $kana_set = array_merge($set1, $set2);
+        } else {
+            $kana_set = $this->flattenSet($character_sets[$kana_type]);
+        }
+        $kana_count = count($kana_set)-1;
+        $init_set = [];
+        while (count($init_set) < 15) {
+            $index = rand(0, $kana_count);
+            if (!in_array($index, $init_set)) {
+                $init_set[] = $index;
+            }
+        }
+        $question_set = [];
+        foreach ($init_set as $index) {
+            $question_set[] = [
+                'question' => $kana_set[$index][1],
+                'answer'   => $kana_set[$index][0],
+            ];
+        }
+        return $question_set;
     }
 
     /**
@@ -118,7 +247,29 @@ class Japanese extends BaseController
      */
     public function game(string $game, string $kana_set): string
     {
-        return view('japanese_game');
+        $types = [$kana_set];
+        if ('all' == $kana_set) {
+            $types = ['hiragana', 'katakana'];
+        }
+        $character_sets = $this->retrieveCharacters($types);
+        $game_data      = [];
+        $format         = 'type';
+        if ('romaji-pick-kana' == $game) {
+            $game_data = $this->romajiPickKana($character_sets, $kana_set);
+            $format    = 'pick';
+        } else if ('romaji-type-kana' == $game) {
+            $game_data = $this->romajiTypeKana($character_sets, $kana_set);
+        } else if ('kana-pick-romaji' == $game) {
+            $game_data = $this->kanaPickRomaji($character_sets, $kana_set);
+            $format    = 'pick';
+        } else if ('kana-type-romaji' == $game) {
+            $game_data = $this->kanaTypeRomaji($character_sets, $kana_set);
+        }
+        $data = [
+            'game_data' => $game_data,
+            'format'     => $format,
+        ];
+        return view('japanese_game', $data);
     }
 
 }
