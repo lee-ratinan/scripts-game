@@ -74,10 +74,51 @@ class Japanese extends BaseController
         return $result_set;
     }
 
+    /**
+     * Game menu
+     * @return string
+     */
     public function index(): string
     {
-        $characters = $this->retrieveCharacters(['hiragana', 'katakana']);
-        return '<pre>' . print_r($characters, true) . '</pre>';
+        return view('japanese_home');
+    }
+
+    /**
+     * Review all kana
+     * @return string
+     */
+    public function review(): string
+    {
+        $data = [
+            'characters' => $this->retrieveCharacters(['hiragana', 'katakana'])
+        ];
+        return view('japanese_review', $data);
+    }
+
+    /**
+     * Rules!
+     * @param string $game
+     * @param string $kana_set
+     * @return string
+     */
+    public function entry(string $game, string $kana_set): string
+    {
+        $data = [
+            'game' => $game,
+            'kana_set' => $kana_set,
+        ];
+        return view('japanese_entry', $data);
+    }
+
+    /**
+     * Game!
+     * @param string $game
+     * @param string $kana_set
+     * @return string
+     */
+    public function game(string $game, string $kana_set): string
+    {
+        return view('japanese_game');
     }
 
 }
