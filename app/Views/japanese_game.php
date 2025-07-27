@@ -118,6 +118,7 @@ $rules = [
             let question_no = $(this).data('question-no'),
                 correct_answer = $('#correct-answer-'+question_no).val(),
                 user_answer = $(this).val();
+            user_answer = user_answer.toLowerCase();
             // check answer, update score
             if (correct_answer === user_answer) {
                 score++;
