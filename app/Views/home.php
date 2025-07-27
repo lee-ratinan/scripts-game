@@ -16,5 +16,12 @@ $this->section('content')
                 <h3>Japanese</h3>
             </a>
         </div>
+        <div class="col">
+            <a class="btn btn-outline-danger w-100 disabled" href="<?= base_url('shavian') ?>" aria-disabled="true">
+                <div class="display-1">🇬🇧</div>
+                <h2>Shavian Alphabet</h2>
+                <h3>(coming soon)</h3>
+            </a>
+        </div>
     </div>
 <?php $this->endSection() ?>
