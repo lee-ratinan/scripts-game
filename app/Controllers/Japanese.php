@@ -266,8 +266,9 @@ class Japanese extends BaseController
             $game_data = $this->kanaTypeRomaji($character_sets, $kana_set);
         }
         $data = [
+            'game_name' => $game,
             'game_data' => $game_data,
-            'format'     => $format,
+            'format'    => $format,
         ];
         return view('japanese_game', $data);
     }

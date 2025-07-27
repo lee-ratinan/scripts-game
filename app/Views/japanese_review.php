@@ -3,8 +3,7 @@ $this->extend('_layout.php');
 $this->section('content');
 ?>
     <style>
-        .hover:hover {background-color: #ccc !important;}
-        .round-border {border: 1px #888 solid; border-radius: 8px;}
+        td { width: 20%; }
     </style>
     <div class="row">
         <div class="col">
@@ -16,36 +15,27 @@ $this->section('content');
         <div class="col">
             <h2>ひらがな　と　カタカナ</h2>
             <p>Hiragana and Katakana</p>
-            <?php foreach ($characters['hiragana'] as $line => $kanas): ?>
-                <div class="row hover">
-                    <div class="col-2 py-2">
-                        <div class="round-border m-2">
-                            <h3><?= $line ?></h3>&nbsp;
-                        </div>
-                    </div>
+            <table class="table table-sm table-hover table-striped table-bordered">
+                <?php foreach ($characters['hiragana'] as $line => $kanas): ?>
+                <tr>
                     <?php foreach ($kanas as $reading => $kana): ?>
-                        <?php
-                        $class = '';
-                        if (in_array($reading, ['shi', 'chi', 'tsu', 'fu', 'ji', 'zu'])) {
-                            $class = 'bg-danger bg-opacity-50';
-                        }
-                        ?>
-                        <div class="col-2 py-2">
-                            <div class="round-border m-2 <?= $class ?>">
-                                <h3><?= $kana ?> / <?= $characters['katakana'][$line][$reading] ?></h3>
-                                <b><?= $reading ?></b>
-                            </div>
-                        </div>
+                        <td <?= (in_array($reading, ['shi', 'chi', 'tsu', 'fu', 'ji', 'zu']) ? 'class="bg-danger bg-opacity-50"' : '') ?>>
+                            <b><?= $kana ?> &nbsp; &middot; &nbsp; <?= $characters['katakana'][$line][$reading] ?></b><br>
+                            <b><?= $reading ?></b>
+                        </td>
                         <?php if (in_array($reading, ['ya', 'yu', 'kya', 'kyu', 'sha', 'shu', 'cha', 'chu',
                                                       'nya', 'nyu', 'hya', 'hyu', 'mya', 'myu', 'rya', 'ryu', 'gya', 'gyu',
                                                       'ja', 'ju', 'bya', 'byu', 'pya', 'pyu'])) : ?>
-                            <div class="col-2 py-2">&nbsp;</div>
+                            <td class="bg-secondary bg-opacity-50">&nbsp;</td>
                         <?php elseif ('wa' == $reading) : ?>
-                            <div class="col-6 py-2">&nbsp;</div>
+                            <td class="bg-secondary bg-opacity-50" colspan="3">&nbsp;</td>
+                        <?php elseif ('n' == $reading) : ?>
+                            <td class="bg-secondary bg-opacity-50" colspan="4">&nbsp;</td>
                         <?php endif; ?>
                     <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
+                </tr>
+                <?php endforeach; ?>
+            </table>
         </div>
     </div>
 <?php $this->endSection() ?>
