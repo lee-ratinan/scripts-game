@@ -25,17 +25,24 @@ $rules = [
             </div>
             <?php foreach ($game_data as $i => $game_row) : ?><?php $question_no = $i+1; ?>
             <div class="row" id="question-<?= $question_no ?>" style="display:none">
-                <div class="col-12 text-center py-5">
+                <div class="col-12 text-center py-3">
                     <p><?= $question_no ?></p>
                     <h2><?= $game_row['question'] ?></h2>
                 </div>
                 <div class="col-12 text-center">
                     <?php if ('pick' == $format) : ?>
-                        <?php foreach ($game_row['choices'] as $answer) : ?>
-                            <button class="btn btn-outline-danger p-4 answer" data-question-no="<?= $question_no ?>" data-correct-answer="<?= $game_row['answer'] == $answer ? 'Y' : 'N' ?>" data-this-choice="<?= $answer ?>">
-                                <?= $answer ?>
-                            </button>
-                        <?php endforeach; ?>
+                        <div class="row mx-5 g-3">
+                            <?php foreach ($game_row['choices'] as $answer) : ?>
+                                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                                    <button class="btn btn-outline-danger p-4 answer w-100"
+                                            data-question-no="<?= $question_no ?>"
+                                            data-correct-answer="<?= $game_row['answer'] == $answer ? 'Y' : 'N' ?>"
+                                            data-this-choice="<?= $answer ?>" style="font-size:1.5em">
+                                        <?= $answer ?>
+                                    </button>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     <?php else: ?>
                         <label for="answer-<?= $question_no ?>">Answer:</label><br>
                         <input type="text" class="form-control answer" id="answer-<?= $question_no ?>" data-question-no="<?= $question_no ?>" style="width:120px;text-align:center;margin:0 auto;" />
